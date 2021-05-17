@@ -1,0 +1,54 @@
+
+# Horizontal Pod Autoscaler on Kubernetes example with Prometheus and Spring Boot
+
+This is an example about how works Horizontal Pod Autoscaler on Kubernetes with custom metrics using Spring Boot
+Actuator with Prometheus.
+
+If you want more information about this example you can take a look in:
+
+https://refactorizando.com/autoescalado-prometheus-spring-boot-kubernetes
+
+## How does it work?
+
+First, deploy a Prometheus instance to your Kubernetes cluster, so you can do it with Helm Chart with the following command:
+
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo add stable https://charts.helm.sh/stable
+    helm repo update
+    helm install prometheus prometheus-community/prometheus
+
+After that verify if your Prometheus-Server is working correctly in the port 9090
+
+    kubectl port-forward prometheus-server 9090:9090
+
+If everything works fine, you need to implement an adapter to use Prometheus with Horizontal Pod Autoscaler,
+This adapter is a bridge between custom metrics and Prometheus. East
+The adapter was created to collect metrics for "http_server_requests_seconds_count_sum"
+To deploy this adapter, go to the Kubernetes folder and run:
+
+    helm install -f helm-prometheus.yaml prometheus-adapter prometheus-community/prometheus-adapter
+
+With Prometheus and adapter working let's go to continue with the Spring Boot application:
+First build a docker image with the next command:
+
+    mvn install
+    mvn spring-boot:build-image
+
+After that and if your are working in your local don't forget:
+
+    eval $(minikube -p minikube docker-env)
+
+And go into kubernetes folder and run the next command:
+
+     kubectl apply -f deployment.yaml
+
+Finally you can run your Horizontal Pod Autoscaler and verify with:
+
+     kubectl apply -f HorizontalPodAutoscaler.yaml.
+
+## How can I verify is HPA create new replicas?
+
+This example will create new replicas when your Spring Boot application
+it has more than 10 requests, so a new replica will be created at that time.
+the maximum number of pods to be created in our example is 5, you can change
+that value in this maxReplicas property.

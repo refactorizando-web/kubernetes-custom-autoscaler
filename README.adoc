@@ -6,7 +6,8 @@ Actuator with Prometheus.
 
 If you want more information about this example you can take a look in:
 
-https://refactorizando.com/autoescalado-prometheus-spring-boot-kubernetes
+* Spanish: https://refactorizando.com/autoescalado-prometheus-spring-boot-kubernetes
+* Emglish: https://refactorizando.com/en/autoscaling-with-prometheus-and-spring-boot-in-kubernetes/
 
 ## How does it work?
 
